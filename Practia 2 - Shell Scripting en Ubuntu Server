@@ -1,0 +1,81 @@
+# Crear el primer script de backup
+nano back.sh
+
+# Contenido dentro de back.sh
+#!/bin/bash
+USUARIO=$(whoami)
+FECHA=$(date +"%d-%m-%Y:%H:%M")
+tar -czvf /home/$USUARIO/bak_$FECHA.tar.gz /home/$USUARIO
+echo "Backup realizado correctamente en: /home/$USUARIO/bak_$FECHA.tar.gz"
+
+# Guardar y salir en nano:
+# CTRL + O
+# ENTER
+# CTRL + X
+
+# Darle permisos de ejecución
+chmod +x back.sh
+
+# Ejecutar el script
+./back.sh
+
+# Verificar que el archivo se haya creado
+ls
+
+# Ver contenido dentro del archivo de backup (listar los archivos comprimidos)
+tar -tzvf bak_11-06-2025:19:09.tar.gz
+# O también (la ruta completa si lo deseas):
+tar -tzvf ./bak_11-06-2025:19:09.tar.gz
+
+
+ cat -tzvf bak_11-06-2025:19:09.tar.gz  
+
+# Limpiar pantalla
+clear
+
+# Ver IP y configuración de red
+ifconfig
+
+# Crear el segundo script de captura de ifconfig
+nano ifconfig1.sh
+
+# Contenido dentro de ifconfig1.sh
+#!/bin/bash
+
+USUARIO=$(whoami)
+RUTA="/home/$USUARIO/Desktop"
+
+read -p "Ingrese nombre de archivo: " NOMBRE
+
+ifconfig > $RUTA/$NOMBRE.txt
+
+echo "Archivo creado y guardado correctamente en: $RUTA/$NOMBRE.txt"
+
+# Guardar y salir en nano:
+# CTRL + O
+# ENTER
+# CTRL + X
+
+# Dar permisos de ejecución
+chmod +x ifconfig1.sh
+
+# Ejecutar el script
+./ifconfig1.sh
+
+# Ejemplo de entrada:
+# Ingrese nombre de archivo: Adrianso3
+# Archivo creado y guardado correctamente en: /home/michael20250845/Desktop/AdrianSo3.txt
+
+# Moverse al directorio Desktop para verificar el archivo
+cd /home/michael20250845/Desktop
+
+# Mostrar el contenido del archivo
+cat AdrianSo3.txt
+
+# Ejemplo de salida de ifconfig (resumida)
+# enp0s3: flags=4163<UP,BROADCAST,RUNNING,MULTICAST> mtu 1500
+# inet 10.0.0.200 netmask 255.255.255.0 broadcast 10.0.0.255
+# ...
+
+# (continúa con el resto de los datos de red que salieron)
+
