@@ -1,0 +1,71 @@
+# --- PASO 1: Configuración de la VM en modo Bridge ---
+
+# (Este paso es en VirtualBox, no lleva código, pero lo documentamos igual)
+# - Apagar la VM
+# - Ir a Configuración → Red → Adaptador 1 → Modo: Adaptador Puente (Bridged Adapter)
+# - Seleccionar la tarjeta de red física real (Wi-Fi o Ethernet)
+# - Guardar y encender la VM
+
+# --- PASO 2: Habilitar el ping en Windows ---
+
+# Abrir PowerShell como administrador y ejecutar:
+netsh advfirewall firewall add rule name="ICMP Allow incoming V4 echo request" protocol=icmpv4:8,any dir=in action=allow
+
+# En Ubuntu Server: Ver la IP de la VM
+ip addr
+
+# Desde Windows probar conectividad (ejemplo, usando la IP que te dio Ubuntu):
+ping 10.0.0.154
+
+# --- PASO 3: Instalar y activar SSH en Ubuntu ---
+
+sudo apt update
+sudo apt install -y openssh-server
+sudo systemctl enable ssh
+sudo systemctl start ssh
+sudo systemctl status ssh
+
+# --- PASO 4: Probar SSH inicial con contraseña ---
+
+# Desde Windows (PowerShell o CMD):
+ssh michael20250845@10.0.0.154
+
+# Te pedirá contraseña de tu usuario de Ubuntu Server.
+
+# --- PASO 5: Generar claves RSA desde Windows ---
+
+# En PowerShell:
+ssh-keygen -t rsa -b 4096 -f $env:USERPROFILE\.ssh\id_rsa_vm
+
+# Cuando pida passphrase, presionar ENTER dos veces.
+# Genera:
+# - id_rsa_vm (clave privada)
+# - id_rsa_vm.pub (clave pública)
+
+# --- PASO 6: Copiar clave pública a Ubuntu ---
+
+# Desde PowerShell en Windows:
+type $env:USERPROFILE\.ssh\id_rsa_vm.pub |
+  ssh michael20250845@10.0.0.154 `
+    "mkdir -p ~/.ssh; cat >> ~/.ssh/authorized_keys; chmod 700 ~/.ssh; chmod 600 ~/.ssh/authorized_keys"
+
+# --- PASO 7: Verificar configuración SSH en Ubuntu ---
+
+# Editar archivo de configuración de SSH:
+sudo nano /etc/ssh/sshd_config
+
+# Asegurarse que estén estas líneas (descomentadas o agregadas):
+PubkeyAuthentication yes
+AuthorizedKeysFile .ssh/authorized_keys
+
+# Guardar: CTRL+O → ENTER → CTRL+X
+
+# Reiniciar el servicio SSH:
+sudo systemctl restart ssh
+
+# --- PASO 8: Probar conexión SSH sin contraseña ---
+
+# Desde Windows:
+ssh -i "$env:USERPROFILE\.ssh\id_rsa_vm" michael20250845@10.0.0.154
+
+# Si todo está bien: accede sin pedir clave
