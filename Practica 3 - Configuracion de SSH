@@ -49,6 +49,8 @@ type $env:USERPROFILE\.ssh\id_rsa_vm.pub |
   ssh michael20250845@10.0.0.154 `
     "mkdir -p ~/.ssh; cat >> ~/.ssh/authorized_keys; chmod 700 ~/.ssh; chmod 600 ~/.ssh/authorized_keys"
 
+ssh -i $env:USERPROFILE\.ssh\id_rsa_vm michael20250845@10.0.0.154
+
 # --- PASO 7: Verificar configuración SSH en Ubuntu ---
 
 # Editar archivo de configuración de SSH:
